@@ -5,26 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Group Chat</title>
     <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #status {
+            color: #888;
+        }
+        #currentGroup {
+            font-weight: bold;
+            color: #008cba;
+        }
+        .group-selector {
+            margin-top: 20px;
+        }
+        .group-selector label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .group-selector button {
+            background-color: #008cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        .group-selector button:hover {
+            background-color: #005f75;
+        }
+        #message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #message-button {
+            background-color: #008cba;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        #message-button:hover {
+            background-color: #005f75;
+        }
+        #container {
+            margin-top: 20px;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        #leave-button {
+            margin-top: 20px;
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #leave-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
 </head>
 <body>
     <h1>Group Chat</h1>
     <div>Status: <span id="status">Not Connected</span></div>
     <div>Current Group: <span id="currentGroup">None</span></div>
 
-    <h3>Select a group to join:</h3>
-    <input type="radio" id="group1" name="group" value="news">Red Room<br/>
-    <input type="radio" id="group2" name="group" value="sports">Blue Room<br/>
-    <input type="radio" id="group3" name="group" value="sports">Green Room<br/>
-    <button onclick="joinGroup()">Join Group</button>
+    <div class="group-selector">
+        <h3>Select a group to join:</h3>
+        <label><input type="radio" name="group" value="Welcome" checked> Welcome</label>
+        <label><input type="radio" name="group" value="red"> Red Room</label>
+        <label><input type="radio" name="group" value="blue"> Blue Room</label>
+        <label><input type="radio" name="group" value="green"> Green Room</label>
+        <button onclick="joinGroup()">Join Group</button>
+    </div>
 
-    <h3>Send a message:</h3>
     <input type="text" id="message" placeholder="Enter your message"/>
-    <button onclick="sentGroupMessage()">Send Message</button>
+    <button id="message-button" onclick="sentGroupMessage()">Send Message</button>
 
-    <h3>Chat History</h3>
-    <div id="container"></div>
+    <div id="container">
+        <h3>Chat History</h3>
+    </div>
 
-    <button onclick="leaveGroup()">Leave Group</button>
+    <button id="leave-button" onclick="leaveGroup()">Leave Group</button>
 
     <script>
         var socket = io();
@@ -34,21 +116,33 @@
         });
 
         function joinGroup() {
-            var selectedGroup = document.querySelector('input[name="group"]:checked').value;
-            socket.emit('join_group', selectedGroup);
-            document.getElementById('currentGroup').textContent = `Joined group: ${selectedGroup}`;
+            var selectedGroup = document.querySelector('input[name="group"]:checked');
+            if (!selectedGroup) {
+                alert('Please select a group to join.');
+                return;
+            }
+            socket.emit('join_group', selectedGroup.value);
+            document.getElementById('currentGroup').textContent = `Joined group: ${selectedGroup.value}`;
         }
 
         function sentGroupMessage() {
             var message = document.getElementById('message').value;
-            var selectedGroup = document.querySelector('input[name="group"]:checked').value;
-            socket.emit('group_message', { group: selectedGroup, message: message });
+            var selectedGroup = document.querySelector('input[name="group"]:checked');
+            if (!selectedGroup) {
+                alert('Please select a group before sending a message.');
+                return;
+            }
+            socket.emit('group_message', { group: selectedGroup.value, message: message });
             document.getElementById('message').value = ''; // Clear the message input after sending
         }
 
         function leaveGroup() {
-            var selectedGroup = document.querySelector('input[name="group"]:checked').value;
-            socket.emit('leave_group', selectedGroup);
+            var selectedGroup = document.querySelector('input[name="group"]:checked');
+            if (!selectedGroup) {
+                alert('You are not in any group.');
+                return;
+            }
+            socket.emit('leave_group', selectedGroup.value);
             document.getElementById('currentGroup').textContent = 'None';
         }
 
