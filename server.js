@@ -27,7 +27,7 @@ app.post('/auth/login', async (req, res) => {
   const { username, password } = req.body;
   const user = await User.findOne({ username });
   if (user && await bcrypt.compare(password, user.password)) {
-    res.send('Login successful'); // Implement session management or token generation here
+    res.redirect('/group_chat.html');
   } else {
     res.send('Login failed');
   }
