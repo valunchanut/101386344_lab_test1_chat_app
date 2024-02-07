@@ -1,11 +1,14 @@
 const express = require('express');
+const http = require('http');
 const mongoose = require('mongoose');
 const socketIo = require('socket.io');
-const io = socketIo(server);
 const bcrypt = require('bcrypt');
-const User = require('./models/User'); // Ensure you have this model
+const User = require('./models/User');
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(app); // Create an HTTP server with Express app
+const io = socketIo(server); // Initialize Socket.IO with the HTTP server
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public')); // Serve static files
