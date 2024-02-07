@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var ioClient = io();
+        ioClient.on('connect', function() {
+            console.log('connected to private chat');
+        });
+
+        function sendPrivateMessage() {
+            const toUser = document.getElementById('toUser').value;
+            const message = document.getElementById('privateMessage').value;
+            ioClient.emit('private_message', { toUser, message });
+        }
+
+        ioClient.on('private_message_client', function(message) {
+            const container = document.getElementById('privateContainer');
+            container.innerHTML += `<p>${message}</p>`;
+        });
+    </script>
+</head>
+<body>
+    <h1>Private Chat</h1>
+    <input type="text" id="toUser" placeholder="Recipient Username"><br>
+    <input type="text" id="privateMessage" placeholder="Enter your message"><br>
+    <button onclick="sendPrivateMessage()">Send Message</button>
+    <h3>Chat History</h3>
+    <div id="privateContainer"></div>
+</body>
+</html>
