@@ -17,7 +17,14 @@ cd 101386344_lab_test1_chat_app
 3. Install dependencies:
 npm install
 
-4. Start the MongoDB service (ensure MongoDB is installed).
+4. Start MongoDB using Docker:
+Ensure Docker is installed on your system.
+
+Pull the MongoDB image:
+docker pull mongo
+
+Start a MongoDB container:
+docker run --name mongodb -d -p 27017:27017 mongo
 
 5. Run the application:
 npm start
