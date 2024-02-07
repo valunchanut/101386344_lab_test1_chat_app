@@ -13,7 +13,7 @@ const io = socketIo(server); // Initialize Socket.IO with the HTTP server
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public')); // Serve static files
 
-mongoose.connect('your_mongodb_uri', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/Users', { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.post('/auth/signup', async (req, res) => {
   const { username, firstname, lastname, password } = req.body;
